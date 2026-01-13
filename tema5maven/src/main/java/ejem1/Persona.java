@@ -1,3 +1,4 @@
+package ejem1;
 
 import java.io.Serializable;
 
