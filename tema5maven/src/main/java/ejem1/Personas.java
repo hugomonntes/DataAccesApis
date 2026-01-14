@@ -50,7 +50,7 @@ public class Personas {
     // 4. Un método ver que en el path buscar y pasándole una cadena como query en
     // la URI, muestre las personas que tengan esa cadena en el nombre ignorando las
     // mayúsculas y minúsculas.
-    @Path("/{cadena}")
+    @Path("/cadena")
     @GET
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public static ArrayList<Persona> buscarPersona(@PathParam("cadena") String cadena) {
