@@ -2,11 +2,17 @@ package ejem1;
 
 import java.io.Serializable;
 
+import jakarta.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class Persona implements Serializable {
     private int id;
     private String nombre;
     private boolean casado;
     private String sexo;
+
+    public Persona() {
+    }
 
     public Persona(int id, String nombre, boolean casado, String sexo) {
         this.id = id;
