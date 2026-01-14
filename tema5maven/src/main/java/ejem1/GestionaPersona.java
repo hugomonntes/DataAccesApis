@@ -22,22 +22,16 @@ public class GestionaPersona {
     // pasada como parámetro en formato XML o JSON
     @POST
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    @Produces(MediaType.APPLICATION_JSON)
-    public static Response setPersona(Persona p) {
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public static Response guardar(Persona p) {
         persona = p;
         personas.add(p);
         return Response.ok().build();
     }
 
-
     @GET
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public static ArrayList<Persona> getPersona() {
-        Persona persona = new Persona();
-        persona.setNombre("Hugo");
-        persona.setCasado(true);
-        persona.setSexo("Masculino");
-        personas.add(persona);
-        return personas;
+    public static Persona leer() {
+        return persona;
     }
 }
