@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+@Path("/personas")
 public class Personas {
     private static Persona persona;
     public static ArrayList<Persona> personas = new ArrayList<>();
@@ -33,6 +35,7 @@ public class Personas {
     }
     // 3. Un método ver que pasándole en la URI un nombre liste, en caso de existir,
     // los datos de esa persona como JSON.
+    @Path("ver/{nombre}")
     @GET
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public static Persona verPersona(String nombre) {
@@ -44,9 +47,20 @@ public class Personas {
         return null; // O lanzar una excepción si no se encuentra la persona
     }
     // 4. Un método ver que en el path buscar y pasándole una cadena como query en
-    // la
-    // URI, muestre las personas que tengan esa cadena en el nombre ignorando las
+    // la URI, muestre las personas que tengan esa cadena en el nombre ignorando las
     // mayúsculas y minúsculas.
+    @Path("buscar/{cadena}")
+    @GET
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public static ArrayList<Persona> buscarPersona(String cadena) {
+        ArrayList<Persona> resultado = new ArrayList<>();
+        for (Persona p : personas) {
+            if (p.getNombre().toLowerCase().contains(cadena.toLowerCase())) {
+                resultado.add(p);
+            }
+        }
+        return resultado;
+    }
     // 5. Crea un formulario para insertar datos de personas.
     // 6. Crea un método que permita insertar personas en el ArrayList personas
     // mediante el formulario anterior.
