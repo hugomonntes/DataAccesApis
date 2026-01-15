@@ -15,6 +15,7 @@ import jakarta.ws.rs.core.Response;
 public class Personas {
     private static Persona persona;
     public static ArrayList<Persona> personas = new ArrayList<>();
+
     // 3. Crea la clase Personas ubicada en la URI personas. Tendrá como atributo
     // estático
     // un ArrayList de personas llamado personas y los siguientes métodos:
@@ -28,12 +29,14 @@ public class Personas {
         personas.add(p);
         return Response.ok().build();
     }
+
     // 2. Un método listar que devuelva el ArrayList personas como XML.
     @GET
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public static ArrayList<Persona> listar() {
         return personas;
     }
+
     // 3. Un método ver que pasándole en la URI un nombre liste, en caso de existir,
     // los datos de esa persona como JSON.
     @Path("/{nombre}")
@@ -47,6 +50,7 @@ public class Personas {
         }
         return null; // O lanzar una excepción si no se encuentra la persona
     }
+
     // 4. Un método ver que en el path buscar y pasándole una cadena como query en
     // la URI, muestre las personas que tengan esa cadena en el nombre ignorando las
     // mayúsculas y minúsculas.
@@ -62,6 +66,7 @@ public class Personas {
         }
         return resultado;
     }
+
     // 5. Crea un formulario para insertar datos de personas.
     @Path("/formulario")
     @POST
@@ -70,10 +75,11 @@ public class Personas {
     public Persona insertarPersonaFormulario(@PathParam("nombre") String nombre,
             @PathParam("casado") boolean casado,
             @PathParam("sexo") String sexo) {
-        Persona nuevaPersona = new Persona(22,nombre, casado, sexo);
+        Persona nuevaPersona = new Persona(22, nombre, casado, sexo);
         personas.add(nuevaPersona);
         return nuevaPersona;
     }
+
     // 6. Crea un método que permita insertar personas en el ArrayList personas
     // mediante el formulario anterior.
     @Path("/insertar")
@@ -83,13 +89,13 @@ public class Personas {
     public Persona insertarPersona(@PathParam("nombre") String nombre,
             @PathParam("casado") boolean casado,
             @PathParam("sexo") String sexo) {
-        Persona nuevaPersona = new Persona(33,nombre, casado, sexo);
+        Persona nuevaPersona = new Persona(22, nombre, casado, sexo);
         personas.add(nuevaPersona);
         return nuevaPersona;
     }
     // 7. Crea, en el path add, un método que permita insertar varias personas de
-    // forma
-    // simultánea en el ArrayList personas.
+    // forma simultánea en el ArrayList personas.
+    
     // 8. Crea un método, que pasándole en el path id una persona permita borrarla
     // del
     // ArrayList personas.
