@@ -63,8 +63,30 @@ public class Personas {
         return resultado;
     }
     // 5. Crea un formulario para insertar datos de personas.
+    @Path("/formulario")
+    @POST
+    @Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public Persona insertarPersonaFormulario(@PathParam("nombre") String nombre,
+            @PathParam("casado") boolean casado,
+            @PathParam("sexo") String sexo) {
+        Persona nuevaPersona = new Persona(22,nombre, casado, sexo);
+        personas.add(nuevaPersona);
+        return nuevaPersona;
+    }
     // 6. Crea un método que permita insertar personas en el ArrayList personas
     // mediante el formulario anterior.
+    @Path("/insertar")
+    @POST
+    @Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public Persona insertarPersona(@PathParam("nombre") String nombre,
+            @PathParam("casado") boolean casado,
+            @PathParam("sexo") String sexo) {
+        Persona nuevaPersona = new Persona(33,nombre, casado, sexo);
+        personas.add(nuevaPersona);
+        return nuevaPersona;
+    }
     // 7. Crea, en el path add, un método que permita insertar varias personas de
     // forma
     // simultánea en el ArrayList personas.
