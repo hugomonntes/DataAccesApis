@@ -93,9 +93,17 @@ public class Personas {
         personas.add(nuevaPersona);
         return nuevaPersona;
     }
+
     // 7. Crea, en el path add, un método que permita insertar varias personas de
     // forma simultánea en el ArrayList personas.
-    
+    @Path("/add")
+    @POST
+    @Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public ArrayList<Persona> insertarPersonas(@PathParam("nombre") String nombre,
+            @PathParam("casado") boolean casado, @PathParam("sexo") String sexo) {
+        return personas;
+    }
     // 8. Crea un método, que pasándole en el path id una persona permita borrarla
     // del
     // ArrayList personas.
