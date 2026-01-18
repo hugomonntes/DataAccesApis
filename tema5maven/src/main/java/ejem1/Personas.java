@@ -105,8 +105,19 @@ public class Personas {
         return personas;
     }
     // 8. Crea un método, que pasándole en el path id una persona permita borrarla
-    // del
+    // del∏
     // ArrayList personas.
+    @Path("id/{idPersona}")∏
+    @POST
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public Response borrarPersona(@PathParam("idPersona") int idPersona) {
+        for (Persona persona : personas) {
+            if (persona.getId() == idPersona) {
+                personas.remove(persona);
+            }
+        }
+        return Response.ok().build();
+    }
     // 9. Modifica el ejercicio del punto 4 para que los parámetros de la query
     // tengan
     // valores por defecto.
