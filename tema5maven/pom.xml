@@ -31,7 +31,7 @@
     <dependency>
       <groupId>org.mariadb.jdbc</groupId>
       <artifactId>mariadb-java-client</artifactId>
-      <version>3.3.0</version>
+      <version>3.3.2</version>
     </dependency>
     <!-- the REST API -->
     <!-- https://mvnrepository.com/artifact/jakarta.ws.rs/jakarta.ws.rs-api -->
