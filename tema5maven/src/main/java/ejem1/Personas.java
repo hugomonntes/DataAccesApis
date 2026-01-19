@@ -107,7 +107,7 @@ public class Personas {
     // 8. Crea un método, que pasándole en el path id una persona permita borrarla
     // del∏
     // ArrayList personas.
-    @Path("id/{idPersona}")∏
+    @Path("id/{idPersona}")
     @POST
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Response borrarPersona(@PathParam("idPersona") int idPersona) {
