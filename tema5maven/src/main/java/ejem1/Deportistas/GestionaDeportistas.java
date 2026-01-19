@@ -50,4 +50,14 @@ public class GestionaDeportistas {
 
         return null;
     }
+
+    // 3. Buscar jugador (/{id}): devuelve la información relativa al deportista id.
+    // @Path("/{id}")
+    // @GET
+    // public Response infoDeportista(@PathParam("id") int id){
+    //     try (Connection connection = DriverManager.getConnection(url,user,password)){
+            
+    //     } catch (Exception e) {
+    //     }
+    // }
 }
