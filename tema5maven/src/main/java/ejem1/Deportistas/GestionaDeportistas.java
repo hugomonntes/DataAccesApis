@@ -198,4 +198,16 @@ public class GestionaDeportistas {
             return Response.status(Status.BAD_REQUEST).entity("No hay deportistas retirados").build();
         }
     }
+
+    // 9. Deportes por genero (/xg): Lista un array con dos elementos: uno con todos
+    // los deportistas masculinos y otro con todos los deportistas femeninos.
+    @Path("/xg")
+    @GET
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public Response buscarPorGenero(){
+        ArrayList<Deportista> masculinos = new ArrayList<>();
+        ArrayList<Deportista> femeninos = new ArrayList<>();
+
+        
+    }
 }
