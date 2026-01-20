@@ -149,7 +149,7 @@ public class GestionaDeportistas {
                         rs.getString("Genero"), rs.getString("Deporte")));
             }
             return Response.ok(retirados).build();
-        } catch (Exception e) { 
+        } catch (Exception e) {
             return Response.status(Status.BAD_REQUEST).entity("No hay deportistas retirados").build();
         }
     }
@@ -174,7 +174,27 @@ public class GestionaDeportistas {
                         rs.getString("Genero"), rs.getString("Deporte")));
             }
             return Response.ok(masculinos).build();
-        } catch (Exception e) { 
+        } catch (Exception e) {
+            return Response.status(Status.BAD_REQUEST).entity("No hay deportistas retirados").build();
+        }
+    }
+
+    // 8. Femeninos (/femeninos): Lista los deportistas femeninos.
+    @Path("/femeninos")
+    @GET
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    public Response buscarFemeninos() {
+        ArrayList<Deportista> femeninos = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            Statement stm = connection.createStatement();
+            String query = "SELECT * FROM deportistas WHERE genero = femenino";
+            ResultSet rs = stm.executeQuery(query);
+            while (rs.next()) {
+                femeninos.add(new Deportista(rs.getInt("id"), rs.getString("nombre"), rs.getBoolean("Activo"),
+                        rs.getString("Genero"), rs.getString("Deporte")));
+            }
+            return Response.ok(femeninos).build();
+        } catch (Exception e) {
             return Response.status(Status.BAD_REQUEST).entity("No hay deportistas retirados").build();
         }
     }
