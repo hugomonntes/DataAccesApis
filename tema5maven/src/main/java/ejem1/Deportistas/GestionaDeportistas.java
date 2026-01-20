@@ -207,6 +207,7 @@ public class GestionaDeportistas {
     public Response buscarPorGenero(){
         ArrayList<Deportista> masculinos = new ArrayList<>();
         ArrayList<Deportista> femeninos = new ArrayList<>();
+        return null;
 
         
     }
