@@ -23,17 +23,24 @@ public class GestionaDeportistas {
     private static final String user = "root";
     private static final String password = "";
 
+    public Connection initConnection() {
+        try {
+            Class.forName("org.mariadb.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+        }
+
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            return connection;
+        } catch (Exception e) {
+            return null;
+        }
+    };
+
     @GET
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Response getAllDesportistas() throws ClassNotFoundException {
         ArrayList<Deportista> listaDeportistas = new ArrayList<>();
-        try {
-            Class.forName("org.mariadb.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Driver not found").build();
-        }
-
-        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+        try (Connection connection = initConnection()) {
             Statement stm = connection.createStatement();
             String query = "SELECT * FROM deportistas";
             ResultSet rs = stm.executeQuery(query);
@@ -50,9 +57,8 @@ public class GestionaDeportistas {
 
             return Response.ok(entity).build();
         } catch (Exception e) {
+            return null;
         }
-
-        return null;
     }
 
     // 3. Buscar jugador (/{id}): devuelve la información relativa al deportista id.
@@ -60,12 +66,7 @@ public class GestionaDeportistas {
     @GET
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Response infoDeportista(@PathParam("id") int id) {
-        try {
-            Class.forName("org.mariadb.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Driver not found").build();
-        }
-        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+        try (Connection connection = initConnection()) {
             Statement stm = connection.createStatement();
             String query = String.format("SELECT * FROM deportistas WHERE id = %d", id);
             ResultSet rs = stm.executeQuery(query);
@@ -84,12 +85,7 @@ public class GestionaDeportistas {
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public Response buscarPorDeporte(@PathParam("nombreDeporte") String nombreDeporte) {
         ArrayList<Deportista> deportistas = new ArrayList<>();
-        try {
-            Class.forName("org.mariadb.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Driver not found").build();
-        }
-        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+        try (Connection connection = initConnection()) {
             Statement stm = connection.createStatement();
             String query = String.format("SELECT * FROM deportistas WHERE deporte = '%s'", nombreDeporte);
             System.out.println(query);
@@ -109,13 +105,8 @@ public class GestionaDeportistas {
     @GET
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public Response buscarActivos() {
-        try {
-            Class.forName("org.mariadb.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Driver not found").build();
-        }
         ArrayList<Deportista> activos = new ArrayList<>();
-        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+        try (Connection connection = initConnection()) {
             Statement stm = connection.createStatement();
             String query = "SELECT * FROM deportistas WHERE activo = true";
             ResultSet rs = stm.executeQuery(query);
@@ -134,13 +125,8 @@ public class GestionaDeportistas {
     @GET
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public Response buscarRetirados() {
-        try {
-            Class.forName("org.mariadb.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Driver not found").build();
-        }
         ArrayList<Deportista> retirados = new ArrayList<>();
-        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+        try (Connection connection = initConnection()) {
             Statement stm = connection.createStatement();
             String query = "SELECT * FROM deportistas WHERE activo = false";
             ResultSet rs = stm.executeQuery(query);
@@ -159,13 +145,8 @@ public class GestionaDeportistas {
     @GET
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public Response buscarMasculinos() {
-        try {
-            Class.forName("org.mariadb.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Driver not found").build();
-        }
         ArrayList<Deportista> masculinos = new ArrayList<>();
-        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+        try (Connection connection = initConnection()) {
             Statement stm = connection.createStatement();
             String query = "SELECT * FROM deportistas WHERE genero = masculino";
             ResultSet rs = stm.executeQuery(query);
@@ -175,7 +156,7 @@ public class GestionaDeportistas {
             }
             return Response.ok(masculinos).build();
         } catch (Exception e) {
-            return Response.status(Status.BAD_REQUEST).entity("No hay deportistas retirados").build();
+            return Response.status(Status.BAD_REQUEST).entity("No hay deportistas masculinos").build();
         }
     }
 
@@ -185,7 +166,7 @@ public class GestionaDeportistas {
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public Response buscarFemeninos() {
         ArrayList<Deportista> femeninos = new ArrayList<>();
-        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+        try (Connection connection = initConnection()) {
             Statement stm = connection.createStatement();
             String query = "SELECT * FROM deportistas WHERE genero = femenino";
             ResultSet rs = stm.executeQuery(query);
@@ -203,12 +184,15 @@ public class GestionaDeportistas {
     // los deportistas masculinos y otro con todos los deportistas femeninos.
     @Path("/xg")
     @GET
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response buscarPorGenero(){
-        ArrayList<Deportista> masculinos = new ArrayList<>();
-        ArrayList<Deportista> femeninos = new ArrayList<>();
-        return null;
-
-        
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    public Response buscarPorGenero() {
+        ArrayList<Response> masculinos = new ArrayList<>();
+        masculinos.add(buscarMasculinos());
+        ArrayList<Response> femeninos = new ArrayList<>();
+        femeninos.add(buscarFemeninos());
+        ArrayList<ArrayList<Response>> general = new ArrayList<>();
+        general.add(masculinos);
+        general.add(femeninos);
+        return Response.ok(general).build();
     }
 }
