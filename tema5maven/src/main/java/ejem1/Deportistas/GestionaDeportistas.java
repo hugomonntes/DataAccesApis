@@ -219,7 +219,21 @@ public class GestionaDeportistas {
     @Path("/deporte/{nombreDeporte}/activos")
     @GET
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response buscarPorDeporte(@PathParam("nombreDeporte") String nombreDeporte){
-        
+    public Response buscarPorDeporteActivo(@PathParam("nombreDeporte") String nombreDeporte){
+        try {
+            Class.forName("org.mariadb.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+        }
+        ArrayList<Deportista> activosPorDeporte = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(url,user,password)){
+            Statement stm = connection.createStatement();
+            String query = String.format("SELECT * FROM deportistas WHERE deporte = '%s' AND activo = true",nombreDeporte);
+            ResultSet rs = stm.executeQuery(query);
+            while (rs.next()) { 
+                activosPorDeporte.add(new Deportista(rs.getInt("id"), rs.getString("nombre"), rs.getBoolean("activo"), rs.getString("genero"), rs.getString("deporte")));
+            }
+        } catch (Exception e) {
+        }
+        return Response.ok(activosPorDeporte).build(); 
     }
 }
