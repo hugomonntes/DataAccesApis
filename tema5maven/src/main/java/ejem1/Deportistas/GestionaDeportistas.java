@@ -8,7 +8,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -47,6 +49,26 @@ public class GestionaDeportistas {
             };
 
             return Response.ok(entity).build();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Path("/android")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response subirDeportistaAndroid(Deportista deportista) throws ClassNotFoundException {
+        try {
+            Class.forName("org.mariadb.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+        }
+        ArrayList<Deportista> listaDeportistas = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            Statement stm = connection.createStatement();
+            String query = "INSERT INTO deportistas (nombre, deporte) VALUES ('" + deportista.getNombre() + "', '" + deportista.getDeporte() + "')";
+            int rs = stm.executeUpdate(query);
+            
+            return Response.ok("Subido bien" + rs).build();
         } catch (Exception e) {
             return null;
         }
