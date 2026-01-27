@@ -356,4 +356,6 @@ public class GestionaDeportistas {
         }
         return Response.ok().build();
     }
+
+    // 15. Crear deportistas (/adds): crea deportistas en el sistema.
 }
