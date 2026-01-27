@@ -381,4 +381,29 @@ public class GestionaDeportistas {
         }
         return Response.ok().build();
     }
+
+    // 16. Actualizar deportista (/): actualiza la información relativa a un
+    // deportista.
+    @Path("/updateDeportista")
+    @POST
+    @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    public Response actualizarDeportista(Deportista deportista) throws ClassNotFoundException {
+        try {
+            Class.forName("org.mariadb.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+        }
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            PreparedStatement ps = connection.prepareStatement(
+                    "UPDATE deportistas SET nombre=?, activo=?, genero=?, deporte=? WHERE id=?");
+            ps.setString(1, deportista.getNombre());
+            ps.setBoolean(2, deportista.isActivo());
+            ps.setString(3, deportista.getGenero());
+            ps.setString(4, deportista.getDeporte());
+            ps.setInt(5, deportista.getId());
+            ps.executeUpdate();
+        } catch (Exception e) {
+        }
+        return Response.ok().build();
+    }
+
 }
