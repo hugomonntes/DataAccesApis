@@ -358,4 +358,27 @@ public class GestionaDeportistas {
     }
 
     // 15. Crear deportistas (/adds): crea deportistas en el sistema.
+    @Path("/adds")
+    @POST
+    @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    public Response crearDeportistas(List<Deportista> deportistas) throws ClassNotFoundException {
+        try {
+            Class.forName("org.mariadb.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+        }
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            PreparedStatement ps = connection.prepareStatement(
+                    "INSERT INTO deportistas (nombre, activo, genero, deporte) VALUES (?, ?, ?, ?)");
+            for (Deportista deportista : deportistas) {
+                ps.setString(1, deportista.getNombre());
+                ps.setBoolean(2, deportista.isActivo());
+                ps.setString(3, deportista.getGenero());
+                ps.setString(4, deportista.getDeporte());
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        } catch (Exception e) {
+        }
+        return Response.ok().build();
+    }
 }
