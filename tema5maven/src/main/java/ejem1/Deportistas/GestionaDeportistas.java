@@ -335,7 +335,7 @@ public class GestionaDeportistas {
     // formulario.
     @Path("/addDeportistaForm")
     @POST
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Consumes("application/x-www-form-urlencoded")
     public Response crearDeportistaForm(@FormParam("nombre") String nombre,
             @FormParam("activo") boolean activo,
             @FormParam("genero") String genero,
