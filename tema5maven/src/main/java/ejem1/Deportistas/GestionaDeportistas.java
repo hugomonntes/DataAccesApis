@@ -2,6 +2,7 @@ package ejem1.Deportistas;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -65,9 +67,10 @@ public class GestionaDeportistas {
         ArrayList<Deportista> listaDeportistas = new ArrayList<>();
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
             Statement stm = connection.createStatement();
-            String query = "INSERT INTO deportistas (nombre, deporte) VALUES ('" + deportista.getNombre() + "', '" + deportista.getDeporte() + "')";
+            String query = "INSERT INTO deportistas (nombre, deporte) VALUES ('" + deportista.getNombre() + "', '"
+                    + deportista.getDeporte() + "')";
             int rs = stm.executeUpdate(query);
-            
+
             return Response.ok("Subido bien" + rs).build();
         } catch (Exception e) {
             return null;
@@ -240,22 +243,117 @@ public class GestionaDeportistas {
     // deportistas activos de un deporte.
     @Path("/deporte/{nombreDeporte}/activos")
     @GET
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response buscarPorDeporteActivo(@PathParam("nombreDeporte") String nombreDeporte){
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    public Response buscarPorDeporteActivo(@PathParam("nombreDeporte") String nombreDeporte) {
         try {
             Class.forName("org.mariadb.jdbc.Driver");
         } catch (ClassNotFoundException e) {
         }
         ArrayList<Deportista> activosPorDeporte = new ArrayList<>();
-        try (Connection connection = DriverManager.getConnection(url,user,password)){
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
             Statement stm = connection.createStatement();
-            String query = String.format("SELECT * FROM deportistas WHERE deporte = '%s' AND activo = true",nombreDeporte);
+            String query = String.format("SELECT * FROM deportistas WHERE deporte = '%s' AND activo = true",
+                    nombreDeporte);
             ResultSet rs = stm.executeQuery(query);
-            while (rs.next()) { 
-                activosPorDeporte.add(new Deportista(rs.getInt("id"), rs.getString("nombre"), rs.getBoolean("activo"), rs.getString("genero"), rs.getString("deporte")));
+            while (rs.next()) {
+                activosPorDeporte.add(new Deportista(rs.getInt("id"), rs.getString("nombre"), rs.getBoolean("activo"),
+                        rs.getString("genero"), rs.getString("deporte")));
             }
         } catch (Exception e) {
         }
-        return Response.ok(activosPorDeporte).build(); 
+        return Response.ok(activosPorDeporte).build();
+    }
+
+    // 11. Contar deportistas (/sdepor): Cuenta el número de deportistas distintos.
+    @Path("/sdepor")
+    @GET
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    public Response contarDeportistas() throws ClassNotFoundException {
+        try {
+            Class.forName("org.mariadb.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+        }
+        int count = 0;
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            Statement stm = connection.createStatement();
+            String query = "SELECT COUNT(DISTINCT nombre) FROM deportistas";
+            ResultSet rs = stm.executeQuery(query);
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+        } catch (Exception e) {
+        }
+        return Response.ok(count).build();
+    }
+
+    // 12. Lista deportes (/deportes): Lista los deportes existentes ordenados
+    // alfabéticamente sin repeticiones.
+    @Path("/deportes")
+    @GET
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    public Response listarDeportes() throws ClassNotFoundException {
+        try {
+            Class.forName("org.mariadb.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+        }
+        ArrayList<String> deportes = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            Statement stm = connection.createStatement();
+            String query = "SELECT DISTINCT deporte FROM deportistas ORDER BY deporte";
+            ResultSet rs = stm.executeQuery(query);
+            while (rs.next()) {
+                deportes.add(rs.getString("deporte"));
+            }
+        } catch (Exception e) {
+        }
+        return Response.ok(deportes).build();
+    }
+
+    // 13. Crear deportista (/): Añade un deportista en el sistema.
+    @Path("/addDeportista")
+    @POST
+    @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    public Response crearDeportista(Deportista deportista) throws ClassNotFoundException {
+        try {
+            Class.forName("org.mariadb.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+        }
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            PreparedStatement ps = connection.prepareStatement(
+                    "INSERT INTO deportistas (nombre, activo, genero, deporte) VALUES (?, ?, ?, ?)");
+            ps.setString(1, deportista.getNombre());
+            ps.setBoolean(2, deportista.isActivo());
+            ps.setString(3, deportista.getGenero());
+            ps.setString(4, deportista.getDeporte());
+            ps.executeUpdate();
+        } catch (Exception e) {
+        }
+        return Response.ok().build();
+    }
+
+    // 14. Crear deportista formulario (/): Añade un deportista mediante un
+    // formulario.
+    @Path("/addDeportistaForm")
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response crearDeportistaForm(@FormParam("nombre") String nombre,
+            @FormParam("activo") boolean activo,
+            @FormParam("genero") String genero,
+            @FormParam("deporte") String deporte) throws ClassNotFoundException {
+        try {
+            Class.forName("org.mariadb.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+        }
+        try (Connection connection = DriverManager.getConnection(url, user, password)) {
+            PreparedStatement ps = connection.prepareStatement(
+                    "INSERT INTO deportistas (nombre, activo, genero, deporte) VALUES (?, ?, ?, ?)");
+            ps.setString(1, nombre);
+            ps.setBoolean(2, activo);
+            ps.setString(3, genero);
+            ps.setString(4, deporte);
+            ps.executeUpdate();
+        } catch (Exception e) {
+        }
+        return Response.ok().build();
     }
 }

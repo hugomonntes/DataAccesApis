@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Formulario de Deportistas</h1>
+    <form action="/tema5maven/rest/deportistas/addDeportistaForm" method="post">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" required><br><br>
+
+        <label for="activo">Activo:</label>
+        <input type="checkbox" id="activo" name="activo"><br><br>
+
+        <label for="genero">Género:</label>
+        <select id="genero" name="genero" required>
+            <option value="M">Masculino</option>
+            <option value="F">Femenino</option>
+        </select><br><br>
+
+        <label for="deporte">Deporte:</label>
+        <input type="text" id="deporte" name="deporte" required><br><br>
+
+        <input type="submit" value="Enviar">
+    </form>
+</body>
+</html>
